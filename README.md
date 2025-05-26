@@ -24,7 +24,7 @@ YummyHouse is a feature-rich restaurant mobile application designed to provide u
 
 2. Clone the repository:
    ```
-   git clone [your-repository-url]
+   git clone https://github.com/GoldenThrust/yummyhouse.git
    ```
 
 3. Navigate to the project directory:
