@@ -1,0 +1,14 @@
+name: user_repository
+description: Dart package which manages the user domain.
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+dependencies:
+  core:
+    path: ../core
+  equatable: ^2.0.7
+  json_annotation: ^4.9.0
+dev_dependencies:
+  json_serializable: ^6.9.5
+  build_runner: ^2.4.15

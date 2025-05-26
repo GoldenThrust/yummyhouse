@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared/shared.dart';
 
 class Register extends StatelessWidget {
   const Register({super.key});
@@ -107,17 +108,17 @@ class Register extends StatelessWidget {
                                   const SizedBox(height: 25),
 
                                   // Input fields
-                                  _buildTextField(
+                                  AppTextField(
                                     icon: Icons.person_outline,
                                     label: "Enter your full name",
                                   ),
                                   const SizedBox(height: 18),
-                                  _buildTextField(
+                                  AppTextField(
                                     icon: Icons.email_outlined,
                                     label: "Enter your email address",
                                   ),
                                   const SizedBox(height: 18),
-                                  _buildTextField(
+                                  AppTextField(
                                     icon: Icons.lock_outline_rounded,
                                     label: "Enter your password",
                                     obscureText: true,
@@ -247,26 +248,6 @@ class Register extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required IconData icon,
-    required String label,
-    bool obscureText = false,
-  }) {
-    return TextField(
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.deepOrange),
-        labelText: label,
-        filled: true,
-        fillColor: Colors.blueGrey[50],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide.none,
         ),
       ),
     );

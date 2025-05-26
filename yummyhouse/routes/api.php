@@ -27,6 +27,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('verification.notice');
 
     // Authenticated user actions
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 });

@@ -1,0 +1,11 @@
+name: shared
+description: Dart package which manages the shared widgets, extensions, and UI utilities.
+publish_to: none
+
+environment:
+  sdk: ^3.7.0
+dependencies:
+  flutter:
+    sdk: flutter
+
+
