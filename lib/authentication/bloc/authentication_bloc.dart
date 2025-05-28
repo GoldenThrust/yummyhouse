@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
@@ -33,12 +34,15 @@ class AuthenticationBloc
             return emit(const AuthenticationState.unauthenticated());
 
           case AuthenticationStatus.authenticated:
-            final user = await _userRepository.getUser();
+            final token = await storage.read(key: key);
+            final user = await _userRepository.getUser(token);
             return emit(
               user != null
                   ? AuthenticationState.authenticated(user)
                   : const AuthenticationState.unauthenticated(),
             );
+          case AuthenticationStatus.unknown:
+            return emit(AuthenticationState.unknown());
         }
       },
       onError: addError,

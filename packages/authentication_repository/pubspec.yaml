@@ -9,7 +9,6 @@ dependencies:
     path: ../core
   user_repository:
     path: ../user_repository
-  flutter_secure_storage: ^9.2.4
   json_annotation: ^4.9.0
 dev_dependencies:
   json_serializable: ^6.9.5

@@ -3,19 +3,17 @@ import 'dart:async';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:core/core.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // Create storage
-final storage = FlutterSecureStorage();
-final key = 'secure_token';
 
-enum AuthenticationStatus { authenticated, unauthenticated }
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
   final _controller = StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
-    final user = await UserRepository().getUser();
+    final token = await storage.read(key: key);
+    final user = await UserRepository().getUser(token);
 
     if (user != null) {
       yield AuthenticationStatus.authenticated;
@@ -37,7 +35,6 @@ class AuthenticationRepository {
 
       _controller.add(AuthenticationStatus.authenticated);
     } catch (e) {
-      print('Sign up failed: $e');
       _controller.add(AuthenticationStatus.unauthenticated);
     }
   }

@@ -1,17 +1,29 @@
+import 'dart:async';
+
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
 import 'package:yummyhouse/register.dart/view/register_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yummyhouse/splash/view/splash.dart';
 
-final _router = GoRouter(
-  initialLocation: '/',
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const GettingStarted()),
-    GoRoute(path: '/register', builder: (context, state) => const Register()),
-    GoRoute(path: '/login', builder: (context, state) => const Login()),
-  ],
-);
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners(); // Immediate refresh
+    _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
 
 class YummyHouse extends StatelessWidget {
   const YummyHouse({super.key, required this.title});
@@ -25,7 +37,48 @@ class YummyHouse extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
-      routerConfig: _router,
+      routerConfig: GoRouter(
+        initialLocation: '/',
+        // refreshListenable: GoRouterRefreshStream(
+        //   context.read<AuthenticationBloc>().stream,
+        // ),
+        redirect: (context, state) {
+          final authState = context.read<AuthenticationBloc>().state;
+
+          final loggingIn =
+              state.fullPath == '/login' || state.fullPath == '/register';
+
+          if (authState.status == AuthenticationStatus.authenticated &&
+              loggingIn) {
+            return '/home'; // Go home if already authenticated
+          }
+
+          if (authState.status == AuthenticationStatus.unauthenticated &&
+              !loggingIn) {
+            return '/';
+          }
+
+          return null; // No redirect
+        },
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) {
+              final authStatus =
+                  context.read<AuthenticationBloc>().state.status;
+              if (authStatus == AuthenticationStatus.unknown) {
+                return const SplashPage();
+              }
+              return const GettingStarted();
+            },
+          ),
+          GoRoute(
+            path: '/register',
+            builder: (context, state) => const RegisterPage(),
+          ),
+          GoRoute(path: '/login', builder: (context, state) => const Login()),
+        ],
+      ),
     );
   }
 }
