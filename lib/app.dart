@@ -4,6 +4,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
+import 'package:yummyhouse/home/view/home_page.dart';
 import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
 import 'package:yummyhouse/register.dart/view/register_page.dart';
@@ -38,7 +39,7 @@ class YummyHouse extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
       routerConfig: GoRouter(
-        initialLocation: '/',
+        initialLocation: '/home',
         // refreshListenable: GoRouterRefreshStream(
         //   context.read<AuthenticationBloc>().stream,
         // ),
@@ -76,7 +77,8 @@ class YummyHouse extends StatelessWidget {
             path: '/register',
             builder: (context, state) => const RegisterPage(),
           ),
-          GoRoute(path: '/login', builder: (context, state) => const Login()),
+          GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
         ],
       ),
     );

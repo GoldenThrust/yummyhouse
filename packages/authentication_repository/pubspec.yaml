@@ -10,6 +10,7 @@ dependencies:
   user_repository:
     path: ../user_repository
   json_annotation: ^4.9.0
+  dartz: ^0.10.1
 dev_dependencies:
   json_serializable: ^6.9.5
   build_runner: ^2.4.15

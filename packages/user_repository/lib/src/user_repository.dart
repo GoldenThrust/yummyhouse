@@ -17,7 +17,6 @@ class UserRepository {
         return _user;
       }
     } catch (e) {
-      print('Error $e');
       return null;
     }
 

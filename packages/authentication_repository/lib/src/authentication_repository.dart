@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:core/core.dart';
+import 'package:dartz/dartz.dart';
 import 'package:user_repository/user_repository.dart';
 
 // Create storage
@@ -23,28 +24,13 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
-  Future<void> signUp({
+  Future<Either<Register, ErrorMessage>> signUp({
+    required String email,
     required String username,
     required String password,
   }) async {
     try {
-      await postRequest<Register>('/signup', {
-        'username': username,
-        'password': password,
-      }, Register.fromJson);
-
-      _controller.add(AuthenticationStatus.authenticated);
-    } catch (e) {
-      _controller.add(AuthenticationStatus.unauthenticated);
-    }
-  }
-
-  Future<void> logIn({
-    required String username,
-    required String password,
-  }) async {
-    try {
-      final response = await postRequest<Register>('/login', {
+      final response = await postRequest<Register>('/signup', {
         'username': username,
         'password': password,
       }, Register.fromJson);
@@ -52,8 +38,30 @@ class AuthenticationRepository {
       await storage.write(key: key, value: response.token);
 
       _controller.add(AuthenticationStatus.authenticated);
+      return Left(response);
     } catch (e) {
       _controller.add(AuthenticationStatus.unauthenticated);
+      return Right(ErrorMessage.fromJson(e as Map<String, dynamic>));
+    }
+  }
+
+  Future<Either<Login, ErrorMessage>> logIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await postRequest<Login>('/login', {
+        'email': email,
+        'password': password,
+      }, Login.fromJson);
+
+      await storage.write(key: key, value: response.token);
+
+      _controller.add(AuthenticationStatus.authenticated);
+      return Left(response);
+    } catch (e) {
+      _controller.add(AuthenticationStatus.unauthenticated);
+      return Right(ErrorMessage.fromJson(e as Map<String, dynamic>));
     }
   }
 
