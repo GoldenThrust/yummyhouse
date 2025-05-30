@@ -51,36 +51,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.isValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
 
-      try {
-        final Either response = await _authenticationRepository.logIn(
-          email: state.email.value,
-          password: state.password.value,
-        );
+      final Either response = await _authenticationRepository.logIn(
+        email: state.email.value,
+        password: state.password.value,
+      );
 
-        response.fold(
-          (response) {
-            emit(state.copyWith(status: FormzSubmissionStatus.success));
-          },
-          (error) {
-            // Handle login error
-            emit(
-              state.copyWith(
-                status: FormzSubmissionStatus.failure,
-                errorMessage: error is ErrorMessage
-                    ? error
-                    : ErrorMessage(message: 'Login failed'),
-              ),
-            );
-          },
-        );
-      } catch (e) {
-        emit(
-          state.copyWith(
-            status: FormzSubmissionStatus.failure,
-            errorMessage: ErrorMessage(message: e.toString()),
-          ),
-        );
-      }
+      response.fold(
+        (response) {
+          emit(state.copyWith(status: FormzSubmissionStatus.success));
+        },
+        (error) {
+          emit(
+            state.copyWith(
+              status: FormzSubmissionStatus.failure,
+              errorMessage:
+                  error is ErrorMessage
+                      ? error
+                      : ErrorMessage(message: 'Login failed'),
+            ),
+          );
+        },
+      );
     } else {
       emit(
         state.copyWith(

@@ -92,6 +92,14 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user();
+
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email address is not verified.'
+            ], 403);
+        }
+
+        return response()->json($user);
     }
 }

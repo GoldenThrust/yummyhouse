@@ -30,10 +30,12 @@ class AuthenticationRepository {
     required String password,
   }) async {
     try {
-      final response = await postRequest<Register>('/signup', {
-        'username': username,
+      final response = await postRequest<Register>('/register', {
+        'email': email,
+        'name': username,
         'password': password,
       }, Register.fromJson);
+
 
       await storage.write(key: key, value: response.token);
 
@@ -41,7 +43,12 @@ class AuthenticationRepository {
       return Left(response);
     } catch (e) {
       _controller.add(AuthenticationStatus.unauthenticated);
-      return Right(ErrorMessage.fromJson(e as Map<String, dynamic>));
+
+      if (e is Map<String, dynamic>) {
+        return Right(ErrorMessage.fromJson(e));
+      }
+
+      return Right(ErrorMessage(message: 'Unexpected error occurred.'));
     }
   }
 
@@ -61,7 +68,12 @@ class AuthenticationRepository {
       return Left(response);
     } catch (e) {
       _controller.add(AuthenticationStatus.unauthenticated);
-      return Right(ErrorMessage.fromJson(e as Map<String, dynamic>));
+  
+      if (e is Map<String, dynamic>) {
+        return Right(ErrorMessage.fromJson(e));
+      }
+
+      return Right(ErrorMessage(message: 'Unexpected error occurred.'));
     }
   }
 

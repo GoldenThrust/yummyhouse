@@ -1,3 +1,4 @@
+import 'package:authentication_repository/src/models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'register.g.dart';
@@ -5,7 +6,7 @@ part 'register.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Register {
   final String message;
-  final String user;
+  final User user;
   final String token;
 
   const Register({

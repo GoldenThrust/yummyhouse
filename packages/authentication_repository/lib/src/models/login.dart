@@ -1,10 +1,11 @@
+import 'package:authentication_repository/src/models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'login.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Login {
-  final String user;
+  final User user;
   final String token;
 
   const Login({

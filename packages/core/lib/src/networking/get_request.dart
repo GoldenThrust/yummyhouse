@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:core/core.dart';
 import 'package:http/http.dart' as http;
 
-
 Future<List<T>> getRequest<T>(
   String path,
   T Function(Map<String, dynamic>) fromJson, {
@@ -22,13 +21,13 @@ Future<List<T>> getRequest<T>(
     final body = jsonDecode(response.body);
 
     if (body is List) {
-      return body.map((e) => fromJson(e as Map<String, dynamic>)).toList();
+      return body.map((b) => fromJson(b as Map<String, dynamic>)).toList();
     } else if (body is Map<String, dynamic>) {
       return [fromJson(body)];
     } else {
-      throw Exception('Unexpected response format');
+      throw {'message': 'Unexpected response format'};
     }
   } else {
-      throw Exception(response.body);
+    throw jsonDecode(response.body);
   }
 }

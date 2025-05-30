@@ -8,12 +8,12 @@ part of 'register.dart';
 
 Register _$RegisterFromJson(Map<String, dynamic> json) => Register(
   message: json['message'] as String,
-  user: json['user'] as String,
+  user: User.fromJson(json['user'] as Map<String, dynamic>),
   token: json['token'] as String,
 );
 
 Map<String, dynamic> _$RegisterToJson(Register instance) => <String, dynamic>{
   'message': instance.message,
-  'user': instance.user,
+  'user': instance.user.toJson(),
   'token': instance.token,
 };

@@ -22,8 +22,9 @@ Future<T> postRequest<T>(
 
   if (response.statusCode == 200 || response.statusCode == 201) {
     final decodedBody = jsonDecode(response.body);
-    return fromJson(decodedBody as Map<String, dynamic>);
+
+    return fromJson(decodedBody);
   } else {
-    throw Exception(response.body);
+    throw jsonDecode(response.body);
   }
 }
