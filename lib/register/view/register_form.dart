@@ -8,9 +8,7 @@ import 'package:shared/shared.dart';
 import 'package:yummyhouse/authentication/authentication.dart';
 import 'package:yummyhouse/authentication/error/email.dart';
 import 'package:yummyhouse/authentication/error/password.dart';
-import 'package:yummyhouse/authentication/error/term.dart';
 import 'package:yummyhouse/authentication/error/username.dart';
-import 'package:yummyhouse/authentication/models/term.dart';
 import 'package:yummyhouse/register/bloc/register_bloc.dart';
 
 class RegisterForm extends StatelessWidget {
@@ -85,7 +83,7 @@ class RegisterForm extends StatelessWidget {
                         recognizer:
                             TapGestureRecognizer()
                               ..onTap = () {
-                                // Handle Terms tap
+                                context.go('/policy/term');
                               },
                       ),
                       const TextSpan(text: " and "),
@@ -99,7 +97,7 @@ class RegisterForm extends StatelessWidget {
                         recognizer:
                             TapGestureRecognizer()
                               ..onTap = () {
-                                // Handle Privacy tap
+                                context.go('/policy/privacy');
                               },
                       ),
                     ],
@@ -147,30 +145,16 @@ class RegisterForm extends StatelessWidget {
 class _AcceptTerm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String? errorText;
-    bool? isChecked = false;
-    final displayError = context
-        .select<RegisterBloc, TermofServiceVallidationError?>(
-          (bloc) => bloc.state.acceptTerm.displayError,
-        );
+    final acceptTerm = context.select<RegisterBloc, bool>(
+      (bloc) => bloc.state.acceptTerm.value,
+    );
 
-    if (displayError != null) {
-      errorText = termError(displayError);
-    }
-
-    ScaffoldMessenger.of(context).clearSnackBars();
-    if (displayError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorText!), backgroundColor: Colors.red),
-      );
-    }
     return Checkbox(
-      value: isChecked,
+      value: acceptTerm,
       onChanged: (val) {
-        isChecked = val;
-        context.read<RegisterBloc>().add(
-          RegisterTermChanged(isChecked ?? false),
-        );
+        if (val != null) {
+          context.read<RegisterBloc>().add(RegisterTermChanged(val));
+        }
       },
     );
   }

@@ -48,7 +48,7 @@ class YummyHouse extends StatelessWidget {
           final authState = context.read<AuthenticationBloc>().state;
 
           final loggingIn =
-              state.fullPath == '/login' || state.fullPath == '/register';
+              state.fullPath == '/login' || state.fullPath == '/register' || state.fullPath == '/' || state.fullPath == '/policy/:policy';
 
           if (authState.status == AuthenticationStatus.authenticated &&
               loggingIn) {
@@ -84,8 +84,8 @@ class YummyHouse extends StatelessWidget {
           ),
           GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(
-            path: '/termandpolicy',
-            builder: (context, state) => const TermandPolicyPage(),
+            path: '/policy/:policy',
+            builder: (context, state) => TermandPolicyPage(policy: state.pathParameters['policy'] ?? 'term'),
           ),
         ],
       ),

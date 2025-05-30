@@ -25,22 +25,38 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
   final AuthenticationRepository _authenticationRepository;
 
-  void _onUsernameChanged(RegisterUsernameChanged event, Emitter<RegisterState> emit) {
+  void _onUsernameChanged(
+    RegisterUsernameChanged event,
+    Emitter<RegisterState> emit,
+  ) {
     final username = Username.dirty(event.username);
     emit(
       state.copyWith(
         username: username,
-        isValid: Formz.validate([username, state.email, state.password, state.acceptTerm]),
-      )
+        isValid: Formz.validate([
+          username,
+          state.email,
+          state.password,
+          state.acceptTerm,
+        ]),
+      ),
     );
   }
 
-  void _onEmailChanged(RegisterEmailChanged event, Emitter<RegisterState> emit) {
+  void _onEmailChanged(
+    RegisterEmailChanged event,
+    Emitter<RegisterState> emit,
+  ) {
     final email = Email.dirty(event.email);
     emit(
       state.copyWith(
         email: email,
-        isValid: Formz.validate([state.username, email, state.password, state.acceptTerm]),
+        isValid: Formz.validate([
+          state.username,
+          email,
+          state.password,
+          state.acceptTerm,
+        ]),
       ),
     );
   }
@@ -53,18 +69,28 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(
       state.copyWith(
         password: password,
-        isValid: Formz.validate([state.username, state.email, password, state.acceptTerm]),
+        isValid: Formz.validate([
+          state.username,
+          state.email,
+          password,
+          state.acceptTerm,
+        ]),
       ),
     );
   }
 
   void _onTermChanged(RegisterTermChanged event, Emitter<RegisterState> emit) {
     final acceptTerm = Term.dirty(event.acceptTerm);
-  
+
     emit(
       state.copyWith(
         acceptTerm: acceptTerm,
-        isValid: Formz.validate([state.username, state.email, state.password, acceptTerm]),
+        isValid: Formz.validate([
+          state.username,
+          state.email,
+          state.password,
+          acceptTerm,
+        ]),
       ),
     );
   }
@@ -92,9 +118,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             emit(
               state.copyWith(
                 status: FormzSubmissionStatus.failure,
-                errorMessage: error is ErrorMessage
-                    ? error
-                    : ErrorMessage(message: 'Register failed'),
+                errorMessage:
+                    error is ErrorMessage
+                        ? error
+                        : ErrorMessage(message: 'Register failed'),
               ),
             );
           },

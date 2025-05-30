@@ -5,7 +5,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Yummy House'),
+      ),
+      body: Text('Welcome to Homepage'),
+    );
   }
 }
