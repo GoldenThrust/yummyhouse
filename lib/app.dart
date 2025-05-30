@@ -7,13 +7,14 @@ import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 import 'package:yummyhouse/home/view/home_page.dart';
 import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
-import 'package:yummyhouse/register.dart/view/register_page.dart';
+import 'package:yummyhouse/register/view/register_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yummyhouse/splash/view/splash.dart';
+import 'package:yummyhouse/termandpolicy/view/termandpolicy_page.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
-    notifyListeners(); // Immediate refresh
+    notifyListeners();
     _subscription = stream.asBroadcastStream().listen((_) => notifyListeners());
   }
 
@@ -77,8 +78,15 @@ class YummyHouse extends StatelessWidget {
             path: '/register',
             builder: (context, state) => const RegisterPage(),
           ),
-          GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => const LoginPage(),
+          ),
           GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+          GoRoute(
+            path: '/termandpolicy',
+            builder: (context, state) => const TermandPolicyPage(),
+          ),
         ],
       ),
     );

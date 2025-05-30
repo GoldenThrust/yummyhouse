@@ -1,8 +1,8 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yummyhouse/register.dart/bloc/register_bloc.dart';
-import 'package:yummyhouse/register.dart/view/register_form.dart';
+import 'package:yummyhouse/register/bloc/register_bloc.dart';
+import 'package:yummyhouse/register/view/register_form.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});

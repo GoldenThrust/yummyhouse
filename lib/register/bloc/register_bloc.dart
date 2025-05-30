@@ -6,6 +6,7 @@ import 'package:formz/formz.dart';
 import 'package:yummyhouse/authentication/models/email.dart';
 import 'package:yummyhouse/authentication/models/password.dart';
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:yummyhouse/authentication/models/term.dart';
 import 'package:yummyhouse/authentication/models/username.dart';
 
 part 'register_event.dart';
@@ -18,6 +19,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterUsernameChanged>(_onUsernameChanged);
     on<RegisterEmailChanged>(_onEmailChanged);
     on<RegisterPasswordChanged>(_onPasswordChanged);
+    on<RegisterTermChanged>(_onTermChanged);
     on<RegisterSubmitted>(_onSubmitted);
   }
 
@@ -28,7 +30,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(
       state.copyWith(
         username: username,
-        isValid: Formz.validate([username, state.email, state.password]),
+        isValid: Formz.validate([username, state.email, state.password, state.acceptTerm]),
       )
     );
   }
@@ -38,7 +40,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(
       state.copyWith(
         email: email,
-        isValid: Formz.validate([state.username, email, state.password]),
+        isValid: Formz.validate([state.username, email, state.password, state.acceptTerm]),
       ),
     );
   }
@@ -51,7 +53,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(
       state.copyWith(
         password: password,
-        isValid: Formz.validate([state.username, state.email, password]),
+        isValid: Formz.validate([state.username, state.email, password, state.acceptTerm]),
+      ),
+    );
+  }
+
+  void _onTermChanged(RegisterTermChanged event, Emitter<RegisterState> emit) {
+    final acceptTerm = Term.dirty(event.acceptTerm);
+  
+    emit(
+      state.copyWith(
+        acceptTerm: acceptTerm,
+        isValid: Formz.validate([state.username, state.email, state.password, acceptTerm]),
       ),
     );
   }

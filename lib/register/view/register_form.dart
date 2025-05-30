@@ -1,3 +1,4 @@
+import 'package:core/core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +6,12 @@ import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared/shared.dart';
 import 'package:yummyhouse/authentication/authentication.dart';
-import 'package:yummyhouse/register.dart/bloc/register_bloc.dart';
+import 'package:yummyhouse/authentication/error/email.dart';
+import 'package:yummyhouse/authentication/error/password.dart';
+import 'package:yummyhouse/authentication/error/term.dart';
+import 'package:yummyhouse/authentication/error/username.dart';
+import 'package:yummyhouse/authentication/models/term.dart';
+import 'package:yummyhouse/register/bloc/register_bloc.dart';
 
 class RegisterForm extends StatelessWidget {
   const RegisterForm({super.key});
@@ -14,6 +20,7 @@ class RegisterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         if (state.status.isFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -24,9 +31,10 @@ class RegisterForm extends StatelessWidget {
         } else if (state.status.isSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Registration successful. Please verify your email.'),
+              content: Text(
+                'Registration successful. Please verify your email.',
+              ),
               backgroundColor: Colors.greenAccent,
-              
             ),
           );
           context.go('/login');
@@ -45,7 +53,7 @@ class RegisterForm extends StatelessWidget {
             style: TextStyle(fontSize: 12, color: Colors.grey, height: 2),
           ),
           const SizedBox(height: 25),
-      
+
           // Input fields
           _UsernameInput(),
           const SizedBox(height: 18),
@@ -53,14 +61,14 @@ class RegisterForm extends StatelessWidget {
           const SizedBox(height: 18),
           _PasswordInput(),
           const SizedBox(height: 25),
-      
+
           // Sign up button
           _SubmitButton(),
-      
+
           // Terms agreement
           Row(
             children: [
-              Checkbox(value: false, onChanged: (val) {}),
+              _AcceptTerm(),
               Expanded(
                 child: Text.rich(
                   TextSpan(
@@ -101,7 +109,7 @@ class RegisterForm extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-      
+
           // Sign In button
           Center(
             child: Text(
@@ -119,7 +127,7 @@ class RegisterForm extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              context.go('/Register');
+              context.go('/login');
             },
             child: const Text(
               'SIGN IN',
@@ -136,17 +144,54 @@ class RegisterForm extends StatelessWidget {
   }
 }
 
+class _AcceptTerm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    String? errorText;
+    bool? isChecked = false;
+    final displayError = context
+        .select<RegisterBloc, TermofServiceVallidationError?>(
+          (bloc) => bloc.state.acceptTerm.displayError,
+        );
+
+    if (displayError != null) {
+      errorText = termError(displayError);
+    }
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    if (displayError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorText!), backgroundColor: Colors.red),
+      );
+    }
+    return Checkbox(
+      value: isChecked,
+      onChanged: (val) {
+        isChecked = val;
+        context.read<RegisterBloc>().add(
+          RegisterTermChanged(isChecked ?? false),
+        );
+      },
+    );
+  }
+}
+
 class _UsernameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final displayError = context.select<RegisterBloc, EmailValidationError?>(
-      (bloc) => bloc.state.email.displayError,
+    String? errorText;
+    final displayError = context.select<RegisterBloc, UsernameValidationError?>(
+      (bloc) => bloc.state.username.displayError,
     );
+
+    if (displayError != null) {
+      errorText = usernameError(displayError);
+    }
 
     return AppTextField(
       icon: Icons.person_outline,
       label: "Enter your full name",
-      displayError: displayError != null ? displayError as String : null,
+      displayError: errorText,
       onChanged: (username) {
         context.read<RegisterBloc>().add(RegisterUsernameChanged(username));
       },
@@ -157,13 +202,19 @@ class _UsernameInput extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String? errorText;
     final displayError = context.select<RegisterBloc, EmailValidationError?>(
       (bloc) => bloc.state.email.displayError,
     );
+
+    if (displayError != null) {
+      errorText = emailError(displayError);
+    }
+
     return AppTextField(
       icon: Icons.email_outlined,
       label: "Enter your email address",
-      displayError: displayError != null ? displayError as String : null,
+      displayError: errorText,
       onChanged: (username) {
         context.read<RegisterBloc>().add(RegisterEmailChanged(username));
       },
@@ -174,14 +225,19 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String? errorText;
     final displayError = context.select<RegisterBloc, PasswordValidationError?>(
       (bloc) => bloc.state.password.displayError,
     );
+
+    if (displayError != null) {
+      errorText = passwordError(displayError);
+    }
     return AppTextField(
       icon: Icons.lock_outline_rounded,
       label: "Enter your password",
       obscureText: true,
-      displayError: displayError != null ? displayError as String : null,
+      displayError: errorText,
       onChanged: (password) {
         context.read<RegisterBloc>().add(RegisterPasswordChanged(password));
       },
@@ -206,15 +262,20 @@ class _SubmitButton extends StatelessWidget {
 
     return ElevatedButton(
       key: const Key('registerForm_submit_raisedButton'),
-      onPressed: isValid
-          ? () {
-              context.read<RegisterBloc>().add(const RegisterSubmitted());
-            }
-          : null,
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 60),
-        backgroundColor: Colors.deepOrange,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onPressed:
+          isValid
+              ? () {
+                context.read<RegisterBloc>().add(const RegisterSubmitted());
+              }
+              : null,
+      style: ButtonStyle(
+        minimumSize: WidgetStateProperty.all(const Size(double.infinity, 60)),
+        backgroundColor: WidgetStateProperty.resolveWith(
+          submitButtonWidgetState,
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       ),
       child: const Text(
         "SIGN UP",

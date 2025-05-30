@@ -5,6 +5,7 @@ class RegisterState extends Equatable {
   final Username username;
   final Email email;
   final Password password;
+  final Term acceptTerm;
   final bool isValid;
   final ErrorMessage? errorMessage;
 
@@ -13,6 +14,7 @@ class RegisterState extends Equatable {
     this.username = const Username.pure(),
     this.email = const Email.pure(),
     this.password = const Password.pure(),
+    this.acceptTerm = const Term.pure(),
     this.isValid = false,
     this.errorMessage,
   });
@@ -22,6 +24,7 @@ class RegisterState extends Equatable {
     Username? username,
     Email? email,
     Password? password,
+    Term? acceptTerm,
     bool? isValid,
     ErrorMessage? errorMessage,
   }) {
@@ -30,6 +33,7 @@ class RegisterState extends Equatable {
       username: username ?? this.username,
       email: email ?? this.email,
       password: password ?? this.password,
+      acceptTerm: acceptTerm ?? this.acceptTerm,
       isValid: isValid ?? this.isValid,
       errorMessage: errorMessage ?? this.errorMessage,
     );

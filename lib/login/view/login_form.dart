@@ -1,9 +1,12 @@
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared/shared.dart';
 import 'package:yummyhouse/authentication/authentication.dart';
+import 'package:yummyhouse/authentication/error/email.dart';
+import 'package:yummyhouse/authentication/error/password.dart';
 import 'package:yummyhouse/login/bloc/login_bloc.dart';
 
 class LoginForm extends StatelessWidget {
@@ -14,6 +17,7 @@ class LoginForm extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.status.isFailure) {
+          ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage?.message ?? 'Login failed'),
@@ -109,14 +113,19 @@ class LoginForm extends StatelessWidget {
 class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String? errorText;
     final displayError = context.select<LoginBloc, EmailValidationError?>(
       (bloc) => bloc.state.email.displayError,
     );
 
+    if (displayError != null) {
+      errorText = emailError(displayError);
+    }
+
     return AppTextField(
       icon: Icons.email_outlined,
       label: "Enter your email address",
-      displayError: displayError != null ? displayError as String : null,
+      displayError: errorText,
       onChanged: (username) {
         context.read<LoginBloc>().add(LoginEmailChanged(username));
       },
@@ -127,14 +136,20 @@ class _EmailInput extends StatelessWidget {
 class _PasswordInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String? errorText;
     final displayError = context.select<LoginBloc, PasswordValidationError?>(
       (bloc) => bloc.state.password.displayError,
     );
+
+    if (displayError != null) {
+      errorText = passwordError(displayError);
+    }
+
     return AppTextField(
       icon: Icons.lock_outline_rounded,
       label: "Enter your password",
       obscureText: true,
-      displayError: displayError as String,
+      displayError: errorText,
       onChanged: (password) {
         context.read<LoginBloc>().add(LoginPasswordChanged(password));
       },
@@ -150,9 +165,7 @@ class _SubmitButton extends StatelessWidget {
     );
 
     if (inProgress) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     final isValid = context.select<LoginBloc, bool>(
@@ -161,15 +174,20 @@ class _SubmitButton extends StatelessWidget {
 
     return ElevatedButton(
       key: const Key('loginForm_submit_raisedButton'),
-      onPressed: isValid
-          ? () {
-              context.read<LoginBloc>().add(const LoginSubmitted());
-            }
-          : null,
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 60),
-        backgroundColor: Colors.deepOrange,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      onPressed:
+          isValid
+              ? () {
+                context.read<LoginBloc>().add(const LoginSubmitted());
+              }
+              : null,
+      style: ButtonStyle(
+        minimumSize: WidgetStateProperty.all(const Size(double.infinity, 60)),
+        backgroundColor: WidgetStateProperty.resolveWith(
+          submitButtonWidgetState,
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
       ),
       child: const Text(
         "SIGN IN",
