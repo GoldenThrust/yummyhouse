@@ -41,30 +41,28 @@ class YummyHouse extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
       routerConfig: GoRouter(
-        initialLocation: '/home',
+        initialLocation: '/',
         refreshListenable: GoRouterRefreshStream(
           context.read<AuthenticationBloc>().stream,
         ),
         redirect: (context, state) {
           final authState = context.read<AuthenticationBloc>().state;
+          final location = state.matchedLocation;
 
-          final loggingIn =
-              state.fullPath == '/login' ||
-              state.fullPath == '/register' ||
-              state.fullPath == '/' ||
-              state.fullPath == '/policy/:policy' || state.fullPath == '/verify/:id/:hash';
+          final isPublicRoute =
+              location == '/' ||
+              location == '/login' ||
+              location == '/register' ||
+              location.startsWith('/policy') ||
+              location.startsWith('/verify');
 
-            print('Location is: ${state.fullPath} AuthenticationStatus: ${authState.status} $loggingIn');
+          final isAuthenticated =
+              authState.status == AuthenticationStatus.authenticated;
+          final isUnauthenticated =
+              authState.status == AuthenticationStatus.unauthenticated;
 
-          if (authState.status == AuthenticationStatus.authenticated &&
-              loggingIn) {
-            return '/home';
-          }
-
-          if (authState.status == AuthenticationStatus.unauthenticated &&
-              !loggingIn) {
-            return '/';
-          }
+          if (isAuthenticated && isPublicRoute) return '/home';
+          if (isUnauthenticated && !isPublicRoute) return '/';
 
           return null;
         },
@@ -72,12 +70,15 @@ class YummyHouse extends StatelessWidget {
           GoRoute(
             path: '/',
             builder: (context, state) {
-              final authStatus =
-                  context.read<AuthenticationBloc>().state.status;
-              if (authStatus == AuthenticationStatus.unknown) {
-                return const SplashPage();
-              }
-              return const GettingStarted();
+              return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, authState) {
+                  print('Authentication Status is: ${authState.status}');
+                  if (authState.status == AuthenticationStatus.unknown) {
+                    return const SplashPage();
+                  }
+                  return const GettingStarted();
+                },
+              );
             },
           ),
           GoRoute(
