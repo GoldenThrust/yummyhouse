@@ -17,7 +17,7 @@ class AuthenticationBloc
     required UserRepository userRepository,
   }) : _authenticationrepository = authenticationrepository,
        _userRepository = userRepository,
-       super(const AuthenticationState.unauthenticated()) {
+       super(const AuthenticationState.unknown())  {
     on<AuthenticationSubscriptionRequested>(_onSubscriptionRequested);
     on<AuthenticationVerifyEmailRequested>(_onVerifyEmailRequested);
     on<AuthenticationLoggedOut>(_onLoggedOut);

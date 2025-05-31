@@ -49,7 +49,9 @@ class YummyHouse extends StatelessWidget {
               state.fullPath == '/login' ||
               state.fullPath == '/register' ||
               state.fullPath == '/' ||
-              state.fullPath == '/policy/:policy' || state.fullPath == '/verfy/:id/:hash';
+              state.fullPath == '/policy/:policy' || state.fullPath == '/verify/:id/:hash';
+
+            print('Location is: ${state.fullPath} AuthenticationStatus: ${authState.status} $loggingIn');
 
           if (authState.status == AuthenticationStatus.authenticated &&
               loggingIn) {
@@ -92,7 +94,7 @@ class YummyHouse extends StatelessWidget {
                 ),
           ),
           GoRoute(
-            path: '/verfy/:id/:hash',
+            path: '/verify/:id/:hash',
             builder: (context, state) {
               final id = int.tryParse(state.pathParameters['id'] ?? '');
               final hash = state.pathParameters['hash'] ?? '';

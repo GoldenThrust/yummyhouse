@@ -19,7 +19,6 @@ class VerifyEmail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify Email')),
       body: Builder(
         builder: (context) {
           context.read<AuthenticationBloc>().add(
@@ -34,12 +33,12 @@ class VerifyEmail extends StatelessWidget {
             listener: (context, state) {
               if (state.status == AuthenticationStatus.emailVerified) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Email verified successfully!')),
-                );
-                context.go('/login');
+                  const SnackBar(content: Text('Email verified successfully!'), backgroundColor:     Colors.greenAccent),
+                  );
+                context.go('/home');
               } else if (state.status == AuthenticationStatus.emailNotVerified) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Email verification failed.')),
+                  SnackBar(content: Text('Email verification failed.'), backgroundColor: Colors.redAccent),
                 );
 
                 context.go('/register');
@@ -48,7 +47,8 @@ class VerifyEmail extends StatelessWidget {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [const Text('Verifing email...')],
+                children: [const Text('Verifing email...'),
+                CircularProgressIndicator(color: Colors.deepOrange,)],
               ),
             ),
           );

@@ -15,6 +15,7 @@ class AuthenticationRepository {
   Stream<AuthenticationStatus> get status async* {
     final token = await storage.read(key: key);
     final user = await UserRepository().getUser(token);
+    print('status $user');
 
     if (user != null) {
       yield AuthenticationStatus.authenticated;

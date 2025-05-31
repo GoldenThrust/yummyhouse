@@ -5,7 +5,7 @@ part 'users.g.dart';
 
 @JsonSerializable()
 class User extends Equatable {
-  final String id;
+  final int id;
   final String name;
   final String email;
   final String? message;
@@ -24,5 +24,5 @@ class User extends Equatable {
   @override
   List<Object> get props => [id, name, email];
 
-  static const empty = User(id: '', name: '-', email: '-');
+  static const empty = User(id: 0, name: '-', email: '-');
 }
