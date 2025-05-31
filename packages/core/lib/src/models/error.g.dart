@@ -6,8 +6,8 @@ part of 'error.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ErrorMessage _$ErrorMessageFromJson(Map<String, dynamic> json) =>
-    ErrorMessage(message: json['message'] as String);
+Message _$MessageFromJson(Map<String, dynamic> json) =>
+    Message(message: json['message'] as String);
 
-Map<String, dynamic> _$ErrorMessageToJson(ErrorMessage instance) =>
+Map<String, dynamic> _$MessageToJson(Message instance) =>
     <String, dynamic>{'message': instance.message};

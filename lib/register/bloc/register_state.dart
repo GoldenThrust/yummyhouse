@@ -7,7 +7,8 @@ class RegisterState extends Equatable {
   final Password password;
   final Term acceptTerm;
   final bool isValid;
-  final ErrorMessage? errorMessage;
+  final Message? responseMessage;
+  final Message? errorMessage;
 
   const RegisterState({
     this.status = FormzSubmissionStatus.initial,
@@ -16,6 +17,7 @@ class RegisterState extends Equatable {
     this.password = const Password.pure(),
     this.acceptTerm = const Term.pure(),
     this.isValid = false,
+    this.responseMessage,
     this.errorMessage,
   });
 
@@ -26,7 +28,8 @@ class RegisterState extends Equatable {
     Password? password,
     Term? acceptTerm,
     bool? isValid,
-    ErrorMessage? errorMessage,
+    Message? responseMessage,
+    Message? errorMessage,
   }) {
     return RegisterState(
       status: status ?? this.status,
@@ -35,6 +38,7 @@ class RegisterState extends Equatable {
       password: password ?? this.password,
       acceptTerm: acceptTerm ?? this.acceptTerm,
       isValid: isValid ?? this.isValid,
+      responseMessage: responseMessage ?? this.responseMessage,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

@@ -65,9 +65,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             state.copyWith(
               status: FormzSubmissionStatus.failure,
               errorMessage:
-                  error is ErrorMessage
+                  error is Message
                       ? error
-                      : ErrorMessage(message: 'Login failed'),
+                      : Message(message: 'Login failed'),
             ),
           );
         },
@@ -76,7 +76,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(
         state.copyWith(
           status: FormzSubmissionStatus.failure,
-          errorMessage: ErrorMessage(message: 'Invalid credentials'),
+          errorMessage: Message(message: 'Invalid credentials'),
         ),
       );
     }

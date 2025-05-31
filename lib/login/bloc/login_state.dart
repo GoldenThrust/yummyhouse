@@ -5,7 +5,7 @@ class LoginState extends Equatable {
   final Email email;
   final Password password;
   final bool isValid;
-  final ErrorMessage? errorMessage;
+  final Message? errorMessage;
 
   const LoginState({
     this.status = FormzSubmissionStatus.initial,
@@ -20,7 +20,7 @@ class LoginState extends Equatable {
     Email? email,
     Password? password,
     bool? isValid,
-    ErrorMessage? errorMessage,
+    Message? errorMessage,
   }) {
     return LoginState(
       status: status ?? this.status,

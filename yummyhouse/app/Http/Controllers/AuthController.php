@@ -12,25 +12,45 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        $message = 'User registered successfully. Please verify your email.';
+
         $fields = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8',
         ]);
 
-        $user = User::create([
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password']),
-        ]);
+        // Get user model instance (not just the query)
+        $user = User::where('email', $fields['email'])->first();
 
+        // If verified user already exists, block registration
+        if ($user && $user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'User already exists.'], 409);
+        }
+
+        // If user does not exist, create new one
+        if (!$user) {
+            $user = User::create([
+                'name' => $fields['name'],
+                'email' => $fields['email'],
+                'password' => bcrypt($fields['password']),
+            ]);
+        } else {
+            // User exists but not verified — update info
+            $user->name = $fields['name'];
+            $user->password = bcrypt($fields['password']);
+            $user->save();
+            $message = 'User already exists. Please verify your email.';
+        }
+
+        // Generate token
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Fire registration event (used for email verification)
         event(new Registered($user));
 
-
         return response()->json([
-            'message' => 'Registration successful. Please verify your email.',
+            'message' => $message,
             'user' => $user,
             'token' => $token,
         ], 201);

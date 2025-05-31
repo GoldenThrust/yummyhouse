@@ -19,6 +19,7 @@ class AuthenticationBloc
        _userRepository = userRepository,
        super(const AuthenticationState.unauthenticated()) {
     on<AuthenticationSubscriptionRequested>(_onSubscriptionRequested);
+    on<AuthenticationVerifyEmailRequested>(_onVerifyEmailRequested);
     on<AuthenticationLoggedOut>(_onLoggedOut);
   }
 
@@ -32,7 +33,6 @@ class AuthenticationBloc
         switch (status) {
           case AuthenticationStatus.unauthenticated:
             return emit(const AuthenticationState.unauthenticated());
-
           case AuthenticationStatus.authenticated:
             final token = await storage.read(key: key);
             final user = await _userRepository.getUser(token);
@@ -41,13 +41,36 @@ class AuthenticationBloc
                   ? AuthenticationState.authenticated(user)
                   : const AuthenticationState.unauthenticated(),
             );
+          case AuthenticationStatus.emailVerified:
+            return emit(const AuthenticationState.emailVerified());
+          case AuthenticationStatus.emailNotVerified:
+            return emit(const AuthenticationState.emailNotVerified());
           case AuthenticationStatus.unknown:
-            return emit(AuthenticationState.unknown());
+            return emit(const AuthenticationState.unknown());
         }
       },
       onError: addError,
     );
   }
+
+  Future<void> _onVerifyEmailRequested(
+    AuthenticationVerifyEmailRequested event,
+    Emitter<AuthenticationState> emit
+  ) async {
+    try {
+      await _authenticationrepository.verifyEmail(
+        id: event.id,
+        hash: event.hash,
+        expires: event.expires,
+        signature: event.signature,
+      );
+
+      emit(const AuthenticationState.emailVerified());
+    } catch (e) {
+      emit(const AuthenticationState.unauthenticated());
+      return;
+    }
+  } 
 
   Future<void> _onLoggedOut(
     AuthenticationLoggedOut event,

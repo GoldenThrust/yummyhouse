@@ -4,6 +4,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
+import 'package:yummyhouse/authentication/view/verify_email.dart';
 import 'package:yummyhouse/home/view/home_page.dart';
 import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
@@ -41,18 +42,18 @@ class YummyHouse extends StatelessWidget {
       ),
       routerConfig: GoRouter(
         initialLocation: '/home',
-        // refreshListenable: GoRouterRefreshStream(
-        //   context.read<AuthenticationBloc>().stream,
-        // ),
         redirect: (context, state) {
           final authState = context.read<AuthenticationBloc>().state;
 
           final loggingIn =
-              state.fullPath == '/login' || state.fullPath == '/register' || state.fullPath == '/' || state.fullPath == '/policy/:policy';
+              state.fullPath == '/login' ||
+              state.fullPath == '/register' ||
+              state.fullPath == '/' ||
+              state.fullPath == '/policy/:policy' || state.fullPath == '/verfy/:id/:hash';
 
           if (authState.status == AuthenticationStatus.authenticated &&
               loggingIn) {
-            return '/home'; // Go home if already authenticated
+            return '/home';
           }
 
           if (authState.status == AuthenticationStatus.unauthenticated &&
@@ -60,7 +61,7 @@ class YummyHouse extends StatelessWidget {
             return '/';
           }
 
-          return null; // No redirect
+          return null;
         },
         routes: [
           GoRoute(
@@ -85,7 +86,35 @@ class YummyHouse extends StatelessWidget {
           GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(
             path: '/policy/:policy',
-            builder: (context, state) => TermandPolicyPage(policy: state.pathParameters['policy'] ?? 'term'),
+            builder:
+                (context, state) => TermandPolicyPage(
+                  policy: state.pathParameters['policy'] ?? 'term',
+                ),
+          ),
+          GoRoute(
+            path: '/verfy/:id/:hash',
+            builder: (context, state) {
+              final id = int.tryParse(state.pathParameters['id'] ?? '');
+              final hash = state.pathParameters['hash'] ?? '';
+              final expires = state.uri.queryParameters['expires'] ?? '';
+              final signature = state.uri.queryParameters['signature'] ?? '';
+
+              if (id == null ||
+                  hash.isEmpty ||
+                  expires.isEmpty ||
+                  signature.isEmpty) {
+                return const Scaffold(
+                  body: Center(child: Text('Invalid verification link')),
+                );
+              }
+
+              return VerifyEmail(
+                id: id,
+                hash: hash,
+                expires: expires,
+                signature: signature,
+              );
+            },
           ),
         ],
       ),

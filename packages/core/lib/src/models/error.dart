@@ -4,15 +4,15 @@ import 'package:equatable/equatable.dart';
 part 'error.g.dart';
 
 @JsonSerializable()
-class ErrorMessage extends Equatable {
+class Message extends Equatable {
   final String message;
-  const ErrorMessage({
+  const Message({
     required this.message,
   });
 
 
-  factory ErrorMessage.fromJson(Map<String, dynamic> json) => _$ErrorMessageFromJson(json);
-  Map<String, dynamic> toJson() => _$ErrorMessageToJson(this);
+  factory Message.fromJson(Map<String, dynamic> json) => _$MessageFromJson(json);
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
 
   @override
   List<Object> get props => [message];

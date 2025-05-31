@@ -118,9 +118,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             state.copyWith(
               status: FormzSubmissionStatus.failure,
               errorMessage:
-                  error is ErrorMessage
+                  error is Message
                       ? error
-                      : ErrorMessage(message: 'Register failed'),
+                      : Message(message: 'Register failed'),
             ),
           );
         },
@@ -129,7 +129,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       emit(
         state.copyWith(
           status: FormzSubmissionStatus.failure,
-          errorMessage: ErrorMessage(message: 'Invalid credentials'),
+          errorMessage: Message(message: 'Invalid credentials'),
         ),
       );
     }
