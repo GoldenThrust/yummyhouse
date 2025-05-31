@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -10,9 +12,9 @@ class HomePage extends StatelessWidget {
         leading: const Icon(Icons.restaurant_menu),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.logout),
             onPressed: () {
-              // Action for shopping cart
+              context.read<AuthenticationBloc>().add(const AuthenticationLoggedOut());
             },
           ),
         ],

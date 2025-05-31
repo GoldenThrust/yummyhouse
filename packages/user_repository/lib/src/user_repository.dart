@@ -18,7 +18,8 @@ class UserRepository {
         _user = users.first;
         return _user;
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
       return null;
     }
 

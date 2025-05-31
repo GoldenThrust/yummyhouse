@@ -15,7 +15,6 @@ class AuthenticationRepository {
   Stream<AuthenticationStatus> get status async* {
     final token = await storage.read(key: key);
     final user = await UserRepository().getUser(token);
-    print('status $user');
 
     if (user != null) {
       yield AuthenticationStatus.authenticated;
@@ -43,7 +42,9 @@ class AuthenticationRepository {
 
       _controller.add(AuthenticationStatus.authenticated);
       return Left(firstResponse);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
+
       _controller.add(AuthenticationStatus.unauthenticated);
 
       if (e is Map<String, dynamic>) {
@@ -70,7 +71,9 @@ class AuthenticationRepository {
 
       _controller.add(AuthenticationStatus.authenticated);
       return Left(firstResponse);
-    } catch (e) {
+    } catch (e,stackTrace) {
+      print(stackTrace);
+
       _controller.add(AuthenticationStatus.unauthenticated);
 
       if (e is Map<String, dynamic>) {
@@ -101,7 +104,9 @@ class AuthenticationRepository {
       }
 
       return Message(message: firstResponse.message);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
+
       if (e is Map<String, dynamic>) {
         return Message.fromJson(e);
       }
@@ -112,13 +117,15 @@ class AuthenticationRepository {
 
   Future<void> logOut() async {
     try {
-      await getRequest<Register>(
+      await getRequest<Message>(
         '/logout',
-        Register.fromJson,
+        Message.fromJson,
         headers: {'Authorization': 'Bearer ${await storage.read(key: key)}'},
       );
       await storage.delete(key: key);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
+
       return;
     }
     _controller.add(AuthenticationStatus.unauthenticated);

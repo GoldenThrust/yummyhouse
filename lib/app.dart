@@ -42,6 +42,9 @@ class YummyHouse extends StatelessWidget {
       ),
       routerConfig: GoRouter(
         initialLocation: '/home',
+        refreshListenable: GoRouterRefreshStream(
+          context.read<AuthenticationBloc>().stream,
+        ),
         redirect: (context, state) {
           final authState = context.read<AuthenticationBloc>().state;
 

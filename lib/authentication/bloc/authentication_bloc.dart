@@ -66,7 +66,8 @@ class AuthenticationBloc
       );
 
       emit(const AuthenticationState.emailVerified());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
       emit(const AuthenticationState.unauthenticated());
       return;
     }
@@ -79,7 +80,9 @@ class AuthenticationBloc
     try {
       await _authenticationrepository.logOut();
       emit(const AuthenticationState.unauthenticated());
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(stackTrace);
+
       emit(const AuthenticationState.unauthenticated());
     }
   }
