@@ -5,6 +5,7 @@ class LoginState extends Equatable {
   final Email email;
   final Password password;
   final bool isValid;
+  final Login? responseMessage;
   final Message? errorMessage;
 
   const LoginState({
@@ -12,6 +13,7 @@ class LoginState extends Equatable {
     this.email = const Email.pure(),
     this.password = const Password.pure(),
     this.isValid = false,
+    this.responseMessage,
     this.errorMessage,
   });
 
@@ -20,6 +22,7 @@ class LoginState extends Equatable {
     Email? email,
     Password? password,
     bool? isValid,
+    Login? responseMessage,
     Message? errorMessage,
   }) {
     return LoginState(
@@ -27,6 +30,7 @@ class LoginState extends Equatable {
       email: email ?? this.email,
       password: password ?? this.password,
       isValid: isValid ?? this.isValid,
+      responseMessage: responseMessage ?? this.responseMessage,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

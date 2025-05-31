@@ -1,4 +1,3 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +20,7 @@ class VerifyEmail extends StatelessWidget {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          context.read<AuthenticationBloc>().add(
+          context.read<EmailVericationBloc>().add(
             AuthenticationVerifyEmailRequested(
               id: _id,
               hash: _hash,
@@ -29,16 +28,24 @@ class VerifyEmail extends StatelessWidget {
               signature: _signature,
             ),
           );
-          return BlocListener<AuthenticationBloc, AuthenticationState> (
+          return BlocListener<EmailVericationBloc, EmailVerificationState>(
             listener: (context, state) {
-              if (state.status == AuthenticationStatus.emailVerified) {
+              if (state == EmailVerificationState.verified) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Email verified successfully!'), backgroundColor:     Colors.greenAccent),
-                  );
+                  const SnackBar(
+                    content: Text('Email verified successfully!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+
+                context.read<AuthenticationBloc>().add(AuthenticationUser());
                 context.go('/home');
-              } else if (state.status == AuthenticationStatus.emailNotVerified) {
+              } else if (state == EmailVerificationState.notVerified) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Email verification failed.'), backgroundColor: Colors.redAccent),
+                  SnackBar(
+                    content: Text('Email verification failed.'),
+                    backgroundColor: Colors.redAccent,
+                  ),
                 );
 
                 context.go('/register');
@@ -47,8 +54,11 @@ class VerifyEmail extends StatelessWidget {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [const Text('Verifing email...'),
-                CircularProgressIndicator(color: Colors.deepOrange,)],
+                children: [
+                  const Text('Verifing email...'),
+                  const SizedBox(height: 20),
+                  CircularProgressIndicator(color: Colors.deepOrange),
+                ],
               ),
             ),
           );

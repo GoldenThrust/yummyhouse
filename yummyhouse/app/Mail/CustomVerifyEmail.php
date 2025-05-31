@@ -17,14 +17,16 @@ class CustomVerifyEmail extends Mailable
     
     public $verifyUrl;
     public $user;
+    public $url;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($verifyUrl, $user)
+    public function __construct($verifyUrl, $user, $url)
     {
         $this->verifyUrl = $verifyUrl;
         $this->user = $user;
+        $this->url = $url;
     }
 
     /**
@@ -48,6 +50,7 @@ class CustomVerifyEmail extends Mailable
             with: [
                 'verifyUrl' => $this->verifyUrl,
                 'user' => $this->user,
+                'url' => $this->url
             ]
         );
     }

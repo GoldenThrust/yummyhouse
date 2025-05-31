@@ -110,7 +110,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
       response.fold(
         (response) {
-          emit(state.copyWith(status: FormzSubmissionStatus.success));
+          emit(state.copyWith(responseMessage: response, status: FormzSubmissionStatus.success));
         },
         (error) {
           // Handle Register error

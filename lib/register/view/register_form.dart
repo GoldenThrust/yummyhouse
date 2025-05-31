@@ -30,9 +30,9 @@ class RegisterForm extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Registration successful. Please verify your email.',
+                state.responseMessage?.message ?? 'Registration successful. Please verify your email.',
               ),
-              backgroundColor: Colors.greenAccent,
+              backgroundColor: Colors.green,
             ),
           );
           context.go('/login');

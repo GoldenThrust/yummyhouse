@@ -26,6 +26,7 @@
             If the button above doesn't work, copy and paste this link into your browser:
             <br>
             <a href="{{ $verifyUrl }}" style="color: #ff6600;">{{ $verifyUrl }}</a>
+            The website verification url is {{ $url }}
         </p>
 
         <p style="font-size: 14px; color: #aaa; float: right;">&mdash; The Yummy House Team</p>

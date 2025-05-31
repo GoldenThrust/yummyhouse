@@ -21,6 +21,10 @@ class AuthenticationVerifyEmailRequested extends AuthenticationEvent {
   });
 }
 
+class AuthenticationUser extends AuthenticationEvent {
+  const AuthenticationUser();
+}
+
 class AuthenticationLoggedOut extends AuthenticationEvent {
   const AuthenticationLoggedOut();
 }

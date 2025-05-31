@@ -114,11 +114,19 @@ class YummyHouse extends StatelessWidget {
                 );
               }
 
-              return VerifyEmail(
-                id: id,
-                hash: hash,
-                expires: expires,
-                signature: signature,
+              return BlocProvider(
+                create: (context) {
+                  return EmailVericationBloc(
+                    authenticationRepository:
+                        context.read<AuthenticationRepository>(),
+                  );
+                },
+                child: VerifyEmail(
+                  id: id,
+                  hash: hash,
+                  expires: expires,
+                  signature: signature,
+                ),
               );
             },
           ),

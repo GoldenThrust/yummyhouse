@@ -6,8 +6,11 @@ Future<List<T>> getRequest<T>(
   String path,
   T Function(Map<String, dynamic>) fromJson, {
   Map<String, String>? headers,
+  Map<String, String>? queryParameters,
 }) async {
-  Uri url = backendUri.replace(path: 'api$path');
+  Uri url = backendUri.replace(path: 'api$path',
+    queryParameters: queryParameters ?? {},
+  );
   final response = await http.get(
     url,
     headers: {

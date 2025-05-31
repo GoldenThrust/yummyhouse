@@ -17,13 +17,9 @@ class AuthenticationState extends Equatable {
   
   const AuthenticationState.unknown()
       : this._();
-  
-  const AuthenticationState.emailVerified()
-      : this._(status: AuthenticationStatus.emailVerified);
-
-  const AuthenticationState.emailNotVerified()
-      : this._(status: AuthenticationStatus.emailNotVerified);
 
   @override
   List<Object> get props => [status, user];
 }
+
+enum EmailVerificationState { verified, notVerified }

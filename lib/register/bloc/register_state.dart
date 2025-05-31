@@ -7,7 +7,7 @@ class RegisterState extends Equatable {
   final Password password;
   final Term acceptTerm;
   final bool isValid;
-  final Message? responseMessage;
+  final Register? responseMessage;
   final Message? errorMessage;
 
   const RegisterState({
@@ -28,7 +28,7 @@ class RegisterState extends Equatable {
     Password? password,
     Term? acceptTerm,
     bool? isValid,
-    Message? responseMessage,
+    Register? responseMessage,
     Message? errorMessage,
   }) {
     return RegisterState(

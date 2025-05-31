@@ -19,7 +19,7 @@ class UserRepository {
         return _user;
       }
     } catch (e, stackTrace) {
-      print(stackTrace);
+      print('Error in UserRepository is $e, Trace $stackTrace');
       return null;
     }
 

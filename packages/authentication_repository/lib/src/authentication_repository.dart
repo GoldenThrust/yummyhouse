@@ -7,7 +7,7 @@ import 'package:user_repository/user_repository.dart';
 
 // Create storage
 
-enum AuthenticationStatus { unknown, authenticated, unauthenticated, emailVerified, emailNotVerified }
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthenticationRepository {
   final _controller = StreamController<AuthenticationStatus>();
@@ -21,6 +21,7 @@ class AuthenticationRepository {
     } else {
       yield AuthenticationStatus.unauthenticated;
     }
+
     yield* _controller.stream;
   }
 
@@ -40,10 +41,10 @@ class AuthenticationRepository {
 
       await storage.write(key: key, value: firstResponse.token);
 
-      _controller.add(AuthenticationStatus.authenticated);
+      _controller.add(AuthenticationStatus.unauthenticated);
       return Left(firstResponse);
     } catch (e, stackTrace) {
-      print(stackTrace);
+      print('Error is $e, Trace $stackTrace');
 
       _controller.add(AuthenticationStatus.unauthenticated);
 
@@ -72,7 +73,7 @@ class AuthenticationRepository {
       _controller.add(AuthenticationStatus.authenticated);
       return Left(firstResponse);
     } catch (e,stackTrace) {
-      print(stackTrace);
+      print('Error is $e, Trace $stackTrace');
 
       _controller.add(AuthenticationStatus.unauthenticated);
 
@@ -92,26 +93,30 @@ class AuthenticationRepository {
   }) async {
     try {
       final response = await getRequest<Message>(
-        '/email/verify/$id/$hash?expires=$expires&signature=$signature',
+        '/email/verify/$id/$hash',
         Message.fromJson,
         headers: {'Authorization': 'Bearer ${await storage.read(key: key)}'},
+        queryParameters: {
+          'expires': expires,
+          'signature': signature,
+        },
       );
 
-      final firstResponse = response.first;
 
       if (response.isEmpty) {
         return Message(message: 'No response from server.');
       }
 
+      final firstResponse = response.first;
+
       return Message(message: firstResponse.message);
     } catch (e, stackTrace) {
-      print(stackTrace);
-
+      print('Error is $e, Trace $stackTrace in Verify email');
       if (e is Map<String, dynamic>) {
-        return Message.fromJson(e);
+        throw Message.fromJson(e);
       }
 
-      return Message(message: 'Unexpected error occurred.');
+      throw Message(message: 'Unexpected error occurred.');
     }
   }
 
@@ -124,7 +129,7 @@ class AuthenticationRepository {
       );
       await storage.delete(key: key);
     } catch (e, stackTrace) {
-      print(stackTrace);
+      print('Error is $e, Trace $stackTrace');
 
       return;
     }

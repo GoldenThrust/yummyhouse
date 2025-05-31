@@ -58,7 +58,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       response.fold(
         (response) {
-          emit(state.copyWith(status: FormzSubmissionStatus.success));
+          emit(state.copyWith(responseMessage: response, status: FormzSubmissionStatus.success));
         },
         (error) {
           emit(
