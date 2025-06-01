@@ -247,7 +247,7 @@ class _SubmitButton extends StatelessWidget {
     return ElevatedButton(
       key: const Key('registerForm_submit_raisedButton'),
       onPressed:
-          isValid
+          isValid && !inProgress
               ? () {
                 context.read<RegisterBloc>().add(const RegisterSubmitted());
               }
