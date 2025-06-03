@@ -72,9 +72,9 @@ class AuthenticationBloc
       emit(const AuthenticationState.unauthenticated());
     } catch (e, stackTrace) {
       print('Error is $e, Trace $stackTrace');
-
       emit(const AuthenticationState.unauthenticated());
     }
+    yummyHouseHive.delete('user');
   }
 }
 

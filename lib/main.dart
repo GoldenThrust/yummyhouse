@@ -1,11 +1,22 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yummyhouse/app.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final dir = await getApplicationDocumentsDirectory();
+  Hive.defaultDirectory = dir.path;
+  Hive.registerAdapter(
+    'User',
+    (json) => User.fromJson(json.cast<String, dynamic>()),
+  );
+  print('Hive directory: ${Hive.defaultDirectory}');
+
   runApp(const MyApp());
 }
 

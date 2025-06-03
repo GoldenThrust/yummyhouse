@@ -50,9 +50,11 @@ dependencies:
   go_router: ^15.1.2
   formz: ^0.8.0
   smooth_page_indicator: ^1.2.1
-  shared_preferences: ^2.5.3
   equatable: ^2.0.7
   dartz: ^0.10.1
+  hive: ^4.0.0-dev.2
+  isar_flutter_libs: ^4.0.0-dev.14
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -141,8 +143,8 @@ flutter_launcher_icons:
   web:
     generate: true
     image_path: "assets/images/logo.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
+    # background_color: "#hexcode"
+    # theme_color: "#hexcode"
   windows:
     generate: true
     image_path: "assets/images/logo.png"

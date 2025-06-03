@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
@@ -46,6 +47,7 @@ class YummyHouse extends StatelessWidget {
           context.read<AuthenticationBloc>().stream,
         ),
         redirect: (context, state) {
+          final user = yummyHouseHive.get('user');
           final authState = context.read<AuthenticationBloc>().state;
           final location = state.matchedLocation;
 
@@ -57,9 +59,9 @@ class YummyHouse extends StatelessWidget {
               location.startsWith('/verify');
 
           final isAuthenticated =
-              authState.status == AuthenticationStatus.authenticated;
+              (authState.status == AuthenticationStatus.authenticated) || user != null;
           final isUnauthenticated =
-              authState.status == AuthenticationStatus.unauthenticated;
+              (authState.status == AuthenticationStatus.unauthenticated) || user == null;
 
           if (isAuthenticated && isPublicRoute) return '/home';
           if (isUnauthenticated && !isPublicRoute) return '/';
@@ -72,7 +74,6 @@ class YummyHouse extends StatelessWidget {
             builder: (context, state) {
               return BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, authState) {
-                  print('Authentication Status is: ${authState.status}');
                   if (authState.status == AuthenticationStatus.unknown) {
                     return const SplashPage();
                   }
