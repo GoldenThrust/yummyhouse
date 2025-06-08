@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
             // $customUrl = "dev://yummyhose/{$id}/{$hash}?expires={$expires}&signature={$signature}";
             $customUrl = env('MOBILE_URL') .  "/verify/{$id}/{$hash}?expires={$expires}&signature={$signature}";
 
-            return new CustomVerifyEmail($customUrl, $notifiable, $url);
+            return new CustomVerifyEmail($customUrl, $notifiable);
         });
     }
 }

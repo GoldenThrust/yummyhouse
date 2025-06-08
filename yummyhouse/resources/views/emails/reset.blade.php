@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Verify Your Email Address</title>
+    <title>Reset Your Password</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,14 +78,6 @@
             background-color: #eeeeee;
             margin: 25px 0;
         }
-        .welcome-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .welcome-box img {
-            max-width: 100px;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -94,20 +86,18 @@
             <h2>YummyHouse</h2>
         </div>
         <div class="content">
-            <div class="welcome-box">
-                <h1>Welcome to YummyHouse!</h1>
-            </div>
+            <h1>Reset Your Password</h1>
             
-            <p>Hello {{ $name ?? 'there' }},</p>
+            <p>Hello,</p>
             
-            <p>Thank you for registering with YummyHouse! We're excited to have you join our community of food lovers.</p>
+            <p>We received a request to reset the password for your YummyHouse account.</p>
             
             <div class="highlight">
-                <p>Please verify your email address by clicking the button below to activate your account:</p>
+                <p>To reset your password, please click on the button below:</p>
             </div>
             
             <div style="text-align: center;">
-                <a href="{{ $url }}" class="button">Verify Email Address</a>
+                <a href="{{ $url }}" class="button">Reset Password</a>
             </div>
             
             <div class="link-fallback">
@@ -117,17 +107,15 @@
             
             <div class="divider"></div>
             
-            <p>This verification link will expire in 24 hours.</p>
+            <p>This password reset link will expire in 60 minutes.</p>
             
-            <p>After verification, you'll have full access to all YummyHouse features and services.</p>
+            <p>If you did not request a password reset, no further action is required and your account remains secure.</p>
             
-            <p>If you did not create an account, no further action is required.</p>
-            
-            <p>Bon Appétit!<br>The YummyHouse Team</p>
+            <p>Regards,<br>The YummyHouse Team</p>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} YummyHouse. All rights reserved.</p>
-            <p>Questions? Contact us at <a href="mailto:support@yummyhouse.com" style="color: #FF7A00;">support@yummyhouse.com</a></p>
+            <p>This is an automated email, please do not reply.</p>
         </div>
     </div>
 </body>

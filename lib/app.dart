@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 import 'package:yummyhouse/authentication/view/verify_email.dart';
+import 'package:yummyhouse/forgot_password/view/forgot_password_page.dart';
 import 'package:yummyhouse/home/view/home_page.dart';
 import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
@@ -42,7 +43,7 @@ class YummyHouse extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
       routerConfig: GoRouter(
-        initialLocation: '/',
+        initialLocation: '/forgot-password',
         refreshListenable: GoRouterRefreshStream(
           context.read<AuthenticationBloc>().stream,
         ),
@@ -55,13 +56,17 @@ class YummyHouse extends StatelessWidget {
               location == '/' ||
               location == '/login' ||
               location == '/register' ||
+              location == '/reset-password' ||
+              location == '/forgot-password' ||
               location.startsWith('/policy') ||
               location.startsWith('/verify');
 
           final isAuthenticated =
-              (authState.status == AuthenticationStatus.authenticated) || user != null;
+              (authState.status == AuthenticationStatus.authenticated) ||
+              user != null;
           final isUnauthenticated =
-              (authState.status == AuthenticationStatus.unauthenticated) || user == null;
+              (authState.status == AuthenticationStatus.unauthenticated) ||
+              user == null;
 
           if (isAuthenticated && isPublicRoute) return '/home';
           if (isUnauthenticated && !isPublicRoute) return '/';
@@ -89,6 +94,10 @@ class YummyHouse extends StatelessWidget {
           GoRoute(
             path: '/login',
             builder: (context, state) => const LoginPage(),
+          ),
+          GoRoute(
+            path: '/forgot-password',
+            builder: (context, state) => const ForgotPasswordPage(),
           ),
           GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(

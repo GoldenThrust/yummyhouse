@@ -15,9 +15,8 @@ void main() async {
     'User',
     (json) => User.fromJson(json.cast<String, dynamic>()),
   );
-  print('Hive directory: ${Hive.defaultDirectory}');
-
-  runApp(const MyApp());
+  
+  runApp(const MyApp());  
 }
 
 class MyApp extends StatelessWidget {

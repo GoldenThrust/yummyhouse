@@ -14,7 +14,6 @@ class AuthenticationRepository {
 
   Stream<AuthenticationStatus> get status async* {
     final token = await storage.read(key: key);
-    print('AuthenticationRepository getting user');
     final user = await UserRepository().getUser(token);
 
     if (user != null) {
@@ -41,6 +40,36 @@ class AuthenticationRepository {
       final firstResponse = response.first;
 
       await storage.write(key: key, value: firstResponse.token);
+
+      _controller.add(AuthenticationStatus.unauthenticated);
+      return Left(firstResponse);
+    } catch (e, stackTrace) {
+      print('Error is $e, Trace $stackTrace');
+
+      _controller.add(AuthenticationStatus.unauthenticated);
+
+      if (e is Map<String, dynamic>) {
+        return Right(Message.fromJson(e));
+      }
+
+      return Right(Message(message: 'Unexpected error occurred.'));
+    }
+  }
+  Future<Either<Message, Message>> resetPassword({
+    required String token,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await postRequest<Message>('/reset-password', {
+        'token': token,
+        'email': email,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      }, Message.fromJson);
+
+      final firstResponse = response.first;
 
       _controller.add(AuthenticationStatus.unauthenticated);
       return Left(firstResponse);

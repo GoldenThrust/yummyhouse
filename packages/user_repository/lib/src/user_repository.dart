@@ -9,10 +9,8 @@ class UserRepository {
     if (token == null || token.isEmpty) return null;
     if (_user != null) return _user;
 
-    print('YummyHouse Hive box opened: ${yummyHouseHive.isOpen}');
 
     final User? user = yummyHouseHive.get('user');
-    print('User from Hive: $user');
     if (user != null) {
       _user = user;
       return _user;
