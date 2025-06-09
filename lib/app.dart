@@ -12,6 +12,7 @@ import 'package:yummyhouse/login/view/login_page.dart';
 import 'package:yummyhouse/onboarding/onboarding.dart';
 import 'package:yummyhouse/register/view/register_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yummyhouse/reset_password/reset_password.dart';
 import 'package:yummyhouse/splash/view/splash.dart';
 import 'package:yummyhouse/termandpolicy/view/termandpolicy_page.dart';
 
@@ -99,7 +100,6 @@ class YummyHouse extends StatelessWidget {
             path: '/forgot-password',
             builder: (context, state) => const ForgotPasswordPage(),
           ),
-          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(
             path: '/policy/:policy',
             builder:
@@ -138,6 +138,21 @@ class YummyHouse extends StatelessWidget {
                   signature: signature,
                 ),
               );
+            },
+          ),
+          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
+          GoRoute(
+            path: '/reset-password',
+            builder: (context, state) {
+              final token = state.uri.queryParameters['token'] ?? '';
+
+              if (token.isEmpty) {
+                return const Scaffold(
+                  body: Center(child: Text('Invalid token')),
+                );
+              }
+
+              return ResetPasswordPage(token: token);
             },
           ),
         ],

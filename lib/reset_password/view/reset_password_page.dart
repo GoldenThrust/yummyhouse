@@ -6,7 +6,8 @@ import 'package:yummyhouse/reset_password/bloc/reset_password_bloc.dart';
 import 'package:yummyhouse/reset_password/view/reset_password_form.dart';
 
 class ResetPasswordPage extends StatelessWidget {
-  const ResetPasswordPage({super.key});
+  final String _token;
+  const ResetPasswordPage({super.key, token}): _token = token;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +97,7 @@ class ResetPasswordPage extends StatelessWidget {
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
                           ),
-                          child: IntrinsicHeight(child: ResetPasswordForm()),
+                          child: IntrinsicHeight(child: ResetPasswordForm(token: _token,)),
                         ),
                       );
                     },
