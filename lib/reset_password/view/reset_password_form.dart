@@ -134,12 +134,12 @@ class _PasswordComfirmationInput extends StatelessWidget {
     }
     return AppTextField(
       icon: Icons.lock_outline_rounded,
-      label: "Enter your password confirmation",
+      label: "Confirm your password",
       obscureText: true,
       displayError: errorText,
       onChanged: (password) {
         context.read<ResetPasswordBloc>().add(
-          ResetPasswordPasswordChanged(password),
+          ResetPasswordPasswordConfirmationChanged(password),
         );
       },
     );
@@ -163,6 +163,7 @@ class _SubmitButton extends StatelessWidget {
     final isValid = context.select<ResetPasswordBloc, bool>(
       (bloc) => bloc.state.isValid,
     );
+    print("isValid: $isValid");
 
     return ElevatedButton(
       key: const Key('reset_passwordForm_submit_raisedButton'),

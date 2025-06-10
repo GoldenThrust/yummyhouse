@@ -39,45 +39,6 @@ class ResetPasswordPage extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              // Top branding
-              Padding(
-                padding: EdgeInsets.only(top: 50, bottom: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Yummy House",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepOrange,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            offset: Offset(1, 1),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      "Restaurant of Bliss",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black54,
-                            offset: Offset(1, 1),
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          
               // Scrollable form
               Expanded(
                 flex: 15,

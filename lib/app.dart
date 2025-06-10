@@ -44,7 +44,7 @@ class YummyHouse extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
       routerConfig: GoRouter(
-        initialLocation: '/forgot-password',
+        initialLocation: '/',
         refreshListenable: GoRouterRefreshStream(
           context.read<AuthenticationBloc>().stream,
         ),
