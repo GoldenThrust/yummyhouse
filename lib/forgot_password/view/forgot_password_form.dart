@@ -15,31 +15,34 @@ class ForgotPasswordForm extends StatefulWidget {
 
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   Email formData = Email.pure();
+  FormzSubmissionStatus status = FormzSubmissionStatus.initial;
   bool isValid = false;
   String? errorText;
-  String? responseMessage;
+  String responseMessage = '';
 
   @override
   Widget build(BuildContext context) {
-    if (responseMessage != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (status.isSuccess) {
+        yummyHouseDialog(
           context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Response"),
-            content: Text(responseMessage!),
-            actions: [
-              TextButton(
-                onPressed: () => context.go('/login'),
-                child: const Text("OK"),
-              ),
-            ],
+          text: responseMessage,
+          onPressed: () {
+            context.pop();
+            context.go('/login');
+          },
+        );
+      } else if (status.isFailure) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorText ?? 'Forgot Password failed'),
+            backgroundColor: Colors.red,
           ),
         );
-      });
-      responseMessage = null;
-    }
-  
+      }
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +78,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
 
         ElevatedButton(
           key: const Key('forgot_password_submit_raisedButton'),
-          onPressed: isValid ? forgotPasswordRequest : null,
+          onPressed: isValid && status.isInitial ? forgotPasswordRequest : null,
           style: ButtonStyle(
             minimumSize: WidgetStateProperty.all(
               const Size(double.infinity, 60),
@@ -101,10 +104,26 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   }
 
   forgotPasswordRequest() async {
-    final response = await postRequest<Message>('/forgot-password', {
-      'email': formData.value,
-    }, Message.fromJson);
+    setState(() {
+      status = FormzSubmissionStatus.inProgress;
+      responseMessage = '';
+      errorText = null;
+    });
 
-    responseMessage = response.first.message;
+    try {
+      final response = await postRequest<Message>('/forgot-password', {
+        'email': formData.value,
+      }, Message.fromJson);
+      setState(() {
+        responseMessage = response.first.message;
+        status = FormzSubmissionStatus.success;
+      });
+    } catch (e, stackTrace) {
+      setState(() {
+        status = FormzSubmissionStatus.failure;
+        errorText = e is Message ? e.message : 'Forgot Password failed';
+      });
+      print('Error: $e Stack Trace: $stackTrace');
+    }
   }
 }

@@ -26,15 +26,18 @@ class RegisterForm extends StatelessWidget {
             ),
           );
         } else if (state.status.isSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.responseMessage?.message ?? 'Registration successful. Please verify your email.',
-              ),
-              backgroundColor: Colors.green,
-            ),
+          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          yummyHouseDialog(
+            context: context,
+            text:
+                state.responseMessage?.message ??
+                'Registration successful. Please verify your email.',
+            onPressed: () {
+              context.pop();
+              context.go('/login');
+            },
           );
-          context.go('/login');
+          // });
         }
       },
       child: Column(
