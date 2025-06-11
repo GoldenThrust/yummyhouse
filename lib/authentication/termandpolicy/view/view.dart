@@ -1,0 +1,1 @@
+export 'termandpolicy_page.dart';

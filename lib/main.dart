@@ -7,6 +7,7 @@ import 'package:user_repository/user_repository.dart';
 import 'package:yummyhouse/app.dart';
 import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final dir = await getApplicationDocumentsDirectory();

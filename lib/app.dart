@@ -1,20 +1,25 @@
 import 'dart:async';
 
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:yummyhouse/authentication/authentication.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:yummyhouse/authentication/bloc/authentication_bloc.dart';
-import 'package:yummyhouse/authentication/view/verify_email.dart';
-import 'package:yummyhouse/forgot_password/view/forgot_password_page.dart';
-import 'package:yummyhouse/home/view/home_page.dart';
-import 'package:yummyhouse/login/view/login_page.dart';
-import 'package:yummyhouse/onboarding/onboarding.dart';
-import 'package:yummyhouse/register/view/register_page.dart';
+import 'package:yummyhouse/main/checkout/view/checkout_page.dart';
+import 'package:yummyhouse/main/home/view/home_page.dart';
+import 'package:yummyhouse/home_navigation_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yummyhouse/reset_password/reset_password.dart';
+import 'package:yummyhouse/main/like_items/view/like_items_page.dart';
+import 'package:yummyhouse/main/ongoing_delivery/view/ongoing_delivery_page.dart';
+import 'package:yummyhouse/main/profile/view/profile_page.dart';
 import 'package:yummyhouse/splash/view/splash.dart';
-import 'package:yummyhouse/termandpolicy/view/termandpolicy_page.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'RootNavigator',
+);
+// final GlobalKey<NavigatorState> _shellNavigatorKey = GlobalKey<NavigatorState>(
+//   debugLabel: 'ShellNavigator',
+// );
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
@@ -44,6 +49,7 @@ class YummyHouse extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
       routerConfig: GoRouter(
+        navigatorKey: _rootNavigatorKey,
         initialLocation: '/',
         refreshListenable: GoRouterRefreshStream(
           context.read<AuthenticationBloc>().stream,
@@ -140,7 +146,6 @@ class YummyHouse extends StatelessWidget {
               );
             },
           ),
-          GoRoute(path: '/home', builder: (context, state) => const HomePage()),
           GoRoute(
             path: '/reset-password',
             builder: (context, state) {
@@ -155,8 +160,40 @@ class YummyHouse extends StatelessWidget {
               return ResetPasswordPage(token: token);
             },
           ),
+          ShellRoute(
+            // navigatorKey: _shellNavigatorKey,
+            builder: (context, state, child) {
+              return HomeNavigationBar(child: child);
+            },
+            routes: [
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomePage(),
+              ),
+              GoRoute(
+                path: '/ongoing-delivery',
+                builder: (context, state) => const OngoingDeliveryPage(),
+              ),
+              GoRoute(
+                path: '/checkout',
+                builder: (context, state) => const CheckoutPage(),
+              ),
+              GoRoute(
+                path: '/likes-items',
+                builder: (context, state) => const LikeItemsPage(),
+              ),
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
+}
+
+class ChecKOutPage {
+  const ChecKOutPage();
 }
