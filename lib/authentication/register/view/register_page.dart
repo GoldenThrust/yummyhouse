@@ -26,7 +26,6 @@ class RegisterPage extends StatelessWidget {
               ),
               Column(
                 children: [
-                  // Top branding
                   const Expanded(
                     flex: 5,
                     child: Padding(
@@ -68,7 +67,6 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
 
-                  // Scrollable form
                   Expanded(
                     flex: 15,
                     child: Container(

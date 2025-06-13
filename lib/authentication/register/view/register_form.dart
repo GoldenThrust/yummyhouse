@@ -246,33 +246,6 @@ class _SubmitButton extends StatelessWidget {
       (bloc) => bloc.state.isValid,
     );
 
-    // return ElevatedButton(
-    //   key: const Key('registerForm_submit_raisedButton'),
-    //   onPressed:
-    //       isValid && !inProgress
-    //           ? () {
-    //             context.read<RegisterBloc>().add(const RegisterSubmitted());
-    //           }
-    //           : null,
-    //   style: ButtonStyle(
-    //     minimumSize: WidgetStateProperty.all(const Size(double.infinity, 60)),
-    //     backgroundColor: WidgetStateProperty.resolveWith(
-    //       submitButtonWidgetState,
-    //     ),
-    //     shape: WidgetStateProperty.all(
-    //       RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    //     ),
-    //   ),
-    //   child: const Text(
-    //     "SIGN UP",
-    //     style: TextStyle(
-    //       fontSize: 16,
-    //       fontWeight: FontWeight.bold,
-    //       color: Colors.white,
-    //     ),
-    //   ),
-    // );
-
     return DefaultButton(
       onPressed:
           isValid && !inProgress

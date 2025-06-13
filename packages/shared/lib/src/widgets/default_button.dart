@@ -19,7 +19,7 @@ class DefaultButton extends StatelessWidget {
         shape: WidgetStateProperty.all(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        shadowColor: WidgetStateProperty.all(Colors.deepOrange),
+        shadowColor: WidgetStateProperty.all(Colors.deepOrangeAccent),
         elevation: WidgetStateProperty.all(10),
       ),
       child: Text(

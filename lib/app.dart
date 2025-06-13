@@ -160,10 +160,17 @@ class YummyHouse extends StatelessWidget {
               return ResetPasswordPage(token: token);
             },
           ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfilePage(),
+          ),
           ShellRoute(
             // navigatorKey: _shellNavigatorKey,
             builder: (context, state, child) {
-              return HomeNavigationBar(child: child);
+              return HomeNavigationBar(
+                location: state.uri.toString(),
+                child: child,
+              );
             },
             routes: [
               GoRoute(
@@ -175,16 +182,12 @@ class YummyHouse extends StatelessWidget {
                 builder: (context, state) => const OngoingDeliveryPage(),
               ),
               GoRoute(
-                path: '/checkout',
+                path: '/cart',
                 builder: (context, state) => const CheckoutPage(),
               ),
               GoRoute(
-                path: '/likes-items',
+                path: '/favorite',
                 builder: (context, state) => const LikeItemsPage(),
-              ),
-              GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfilePage(),
               ),
             ],
           ),

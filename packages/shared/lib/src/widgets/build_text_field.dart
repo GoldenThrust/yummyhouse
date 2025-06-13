@@ -27,22 +27,24 @@ class AppTextField extends StatelessWidget {
         filled: true,
         fillColor: Colors.blueGrey[50],
         errorText: displayError,
-        errorBorder: displayError != null
-            ? OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.red, width: 1.5),
-              )
-            : null,
+        errorBorder:
+            displayError != null
+                ? OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.red, width: 1.5),
+                )
+                : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(
-        color: Colors.deepOrange, // border color when focused
-        width: 2.0,         // border width when focused
-      ),
-    ),
+          borderSide: BorderSide(
+            color: Colors.deepOrange, // border color when focused
+            width: 2.0, // border width when focused
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
     );
   }
