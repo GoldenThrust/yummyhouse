@@ -47,11 +47,11 @@ class _GettingStartedState extends State<GettingStarted> {
     super.initState();
 
     // Precache all onboarding images
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      for (var data in onboardingData) {
-        precacheImage(AssetImage(data['image']!), context);
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   for (var data in onboardingData) {
+    //     precacheImage(AssetImage(data['image']!), context);
+    //   }
+    // });
 
     _controller.addListener(() {
       setState(() {
@@ -66,7 +66,11 @@ class _GettingStartedState extends State<GettingStarted> {
           curve: Curves.easeInOut,
         );
       } else {
-        _controller.jumpToPage(0);
+        _controller.animateToPage(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       }
     });
   }

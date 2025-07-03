@@ -67,6 +67,7 @@ class AuthenticationBloc
     AuthenticationLoggedOut event,
     Emitter<AuthenticationState> emit,
   ) async {
+    yummyHouseHive.delete('user');
     try {
       await _authenticationrepository.logOut();
       emit(const AuthenticationState.unauthenticated());
@@ -74,7 +75,6 @@ class AuthenticationBloc
       print('Error is $e, Trace $stackTrace');
       emit(const AuthenticationState.unauthenticated());
     }
-    yummyHouseHive.delete('user');
   }
 }
 

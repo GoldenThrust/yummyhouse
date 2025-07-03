@@ -67,7 +67,6 @@ class HomeNavigationBar extends StatelessWidget {
 
               return NavigationDestination(
                 tooltip: 'Home',
-                enabled: !isProfile,
                 selectedIcon: AnimatedContainer(
                   duration: Duration(milliseconds: 300),
                   padding: const EdgeInsets.all(10),
