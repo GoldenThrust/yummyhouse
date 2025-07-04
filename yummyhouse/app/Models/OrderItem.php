@@ -29,13 +29,12 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function food()
+     public function food()
     {
         return $this->belongsTo(Food::class);
     }
 
 
-    // Get the item (either food)
     public function getItemAttribute()
     {
         return $this->food;

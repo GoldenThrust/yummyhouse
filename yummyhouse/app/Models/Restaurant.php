@@ -36,7 +36,9 @@ class Restaurant extends Model
         'is_active',
         'opening_hours',
         'delivery_radius',
-        'featured'
+        'featured',
+        'delivery_price',
+        'delivery_price_type',
     ];
 
     protected $casts = [
@@ -106,8 +108,8 @@ class Restaurant extends Model
             *, 
             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
         ", [$latitude, $longitude, $latitude])
-        ->having('distance', '<=', $radius)
-        ->orderBy('distance');
+            ->having('distance', '<=', $radius)
+            ->orderBy('distance');
     }
 
     public function getDistanceFromAttribute($latitude, $longitude)
@@ -127,8 +129,8 @@ class Restaurant extends Model
         $lonDelta = deg2rad($lon2 - $lon1);
 
         $a = sin($latDelta / 2) * sin($latDelta / 2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($lonDelta / 2) * sin($lonDelta / 2);
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($lonDelta / 2) * sin($lonDelta / 2);
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
@@ -149,7 +151,7 @@ class Restaurant extends Model
         }
 
         $hours = $this->opening_hours[$today];
-        
+
         if ($hours['closed']) {
             return false;
         }

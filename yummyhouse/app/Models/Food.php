@@ -17,9 +17,8 @@ class Food extends Model
         'restaurant_id',
         'price',
         'discounted_price',
-        'discounted_threshold',
-        'delivery_price',
-        'delivery_price_type',
+        'discounted_threshold_min',
+        'discounted_threshold_max',
         'preparation_time',
         'is_available',
         'is_vegetarian',
@@ -27,6 +26,7 @@ class Food extends Model
         'is_spicy',
         'allergens',
         'ingredients',
+        'nutritional_info',
         'calories',
         'rating',
         'review_count'
@@ -42,10 +42,12 @@ class Food extends Model
         'is_spicy' => 'boolean',
         'allergens' => 'array',
         'ingredients' => 'array',
+        'nutritional_info' => 'array',
         'calories' => 'integer',
         'rating' => 'decimal:2',
         'review_count' => 'integer',
-        'discounted_threshold' => 'decimal:2',
+        'discounted_threshold_min' => 'decimal:2',
+        'discounted_threshold_max' => 'decimal:2',
         'delivery_price' => 'decimal:2',
     ];
 
@@ -95,9 +97,7 @@ class Food extends Model
         if ($this->delivery_price_type === 'free') {
             return 0;
         }
-        
-        // For distance and per_item, return the base value
-        // Actual calculation would be done in the order service
+
         return $this->delivery_price;
     }
 

@@ -18,7 +18,7 @@ class Order extends Model
         'subtotal',
         'tax_amount',
         'delivery_fee',
-        'discount_amount',
+        // 'discount_amount',
         'total_amount',
         'payment_status',
         'payment_method',
@@ -34,7 +34,7 @@ class Order extends Model
         'subtotal' => 'decimal:2',
         'tax_amount' => 'decimal:2',
         'delivery_fee' => 'decimal:2',
-        'discount_amount' => 'decimal:2',
+        // 'discount_amount' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'estimated_delivery_time' => 'datetime',
         'actual_delivery_time' => 'datetime',
@@ -126,6 +126,60 @@ class Order extends Model
             self::STATUS_PENDING,
             self::STATUS_CONFIRMED
         ]);
+    }
+
+    public function cancel($reason)
+    {
+        if (!$this->canBeCancelled()) {
+            throw new \Exception('Order cannot be cancelled at this stage.');
+        }
+
+        $this->status = self::STATUS_CANCELLED;
+        $this->cancelled_reason = $reason;
+        $this->cancelled_at = now();
+        $this->save();
+        return $this;
+    }
+
+    public function calculateDistanceToRestaurant(mixed $location)
+    {
+        $restaurantLocation = $this->restaurant->location;
+        return haversineGreatCircleDistance(
+            $location->latitude,
+            $location->longitude,
+            $restaurantLocation->latitude,
+            $restaurantLocation->longitude
+        );
+    }
+
+    public function calculateDeliveryFee(mixed $location = null)
+    {
+        if ($this->restaurant->delivery_price_type === 'fixed') {
+            return $this->restaurant->delivery_fee;
+        } else if ($this->restaurant->delivery_price_type === 'per_item') {
+            return $this->orderItems->map(fn($item) => $item->quantity * $item->price)->sum() * $this->restaurant->delivery_fee;
+        } else if ($this->restaurant->delivery_price_type === 'distance') {
+            if ($location === null) {
+                throw new \Exception('Location is required to calculate delivery fee based on distance.');
+            }
+
+            $distance = $this->calculateDistanceToRestaurant($location);
+            return $distance * $this->restaurant->delivery_fee;
+        }
+
+        return 0;
+    }
+
+    public function updateSubtotal()
+    {
+        $this->subtotal = $this->orderItems->map(fn($item) => $item->quantity * $item->price)->sum();
+        $this->save();
+        return $this->subtotal;
+    }
+
+    public function calculateTotalPrice(mixed $location = null)
+    {
+        return $this->subtotal + $this->tax_amount + $this->calculateDeliveryFee($location);
     }
 
     public function getStatusColorAttribute()
