@@ -82,6 +82,56 @@ class Restaurant extends Model
         return $this->hasMany(Coupon::class);
     }
 
+    public function staff()
+    {
+        return $this->hasMany(RestaurantStaff::class);
+    }
+
+    public function activeStaff()
+    {
+        return $this->hasMany(RestaurantStaff::class)->where('status', 'active');
+    }
+
+    public function managers()
+    {
+        return $this->hasMany(RestaurantStaff::class)->where('role', 'manager')->where('status', 'active');
+    }
+
+    public function deliveryStaff()
+    {
+        return $this->hasMany(RestaurantStaff::class)->where('role', 'delivery_person')->where('status', 'active');
+    }
+
+    public function availableDeliveryStaff()
+    {
+        return $this->deliveryStaff()->whereHas('user', function($query) {
+            $query->whereHas('vehicleInfo', function($q) {
+                $q->where('is_verified', true);
+            });
+        });
+    }
+
+    /**
+     * Get an available delivery person for an order.
+     */
+    public function getAvailableDeliveryPerson()
+    {
+        return $this->staff()
+                   ->availableDeliveryPersons()
+                   ->with(['user', 'user.vehicleInfo'])
+                   ->first();
+    }
+
+    /**
+     * Count available delivery persons.
+     */
+    public function availableDeliveryPersonsCount(): int
+    {
+        return $this->staff()
+                   ->availableDeliveryPersons()
+                   ->count();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

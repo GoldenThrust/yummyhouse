@@ -6,20 +6,27 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
 
-    public const ROLE = ['customer', 'admin', 'restaurant_owner', 'delivery_persons'];
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
+
+    public const ROLE = ['customer', 'admin', 'restaurant_owner', 'staff'];
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -29,7 +36,27 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
     ];
 
-    
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -42,18 +69,6 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
-
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
 
     public function addresses()
     {
@@ -95,6 +110,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasManyThrough(Order::class, DeliveryTracking::class, 'delivery_person_id', 'id', 'id', 'order_id');
     }
 
+    public function restaurantStaff()
+    {
+        return $this->hasMany(RestaurantStaff::class);
+    }
+
+    public function activeRestaurantStaff()
+    {
+        return $this->hasMany(RestaurantStaff::class)->where('status', 'active');
+    }
+
     /**
      * Send a password reset notification to the user.
      *
@@ -120,12 +145,20 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function scopeDeliveryPersons($query)
     {
-        return $query->where('role', 'delivery_persons');
+        return $query->where('role', 'staff')
+                    ->whereHas('activeRestaurantStaff', function($q) {
+                        $q->where('role', 'delivery_person');
+                    });
     }
 
     public function scopeAdmins($query)
     {
         return $query->where('role', 'admin');
+    }
+
+    public function scopeStaff($query)
+    {
+        return $query->where('role', 'staff');
     }
 
     public function scopeVerified($query)
@@ -146,7 +179,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isDeliveryPerson()
     {
-        return $this->role === 'delivery_persons';
+        return $this->isStaff() && 
+               $this->activeRestaurantStaff()->where('role', 'delivery_person')->exists();
     }
 
     public function isAdmin()
@@ -154,11 +188,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === 'admin';
     }
 
+    public function isStaff()
+    {
+        return $this->role === 'staff';
+    }
+
     public function canDeliverOrders()
     {
-        return $this->isDeliveryPerson() && 
-               $this->vehicleInfo && 
-               $this->vehicleInfo->canDeliver();
+        return $this->isDeliveryPerson() &&
+            $this->vehicleInfo &&
+            $this->vehicleInfo->canDeliver();
     }
 
     public function hasVerifiedVehicle()
@@ -177,8 +216,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'customer' => 'Customer',
             'admin' => 'Administrator',
             'restaurant_owner' => 'Restaurant Owner',
-            'delivery_persons' => 'Delivery Person'
+            'staff' => 'Staff'
         ];
+
+        // If user is staff, check their specific restaurant staff role
+        if ($this->role === 'staff' && $this->activeRestaurantStaff()->exists()) {
+            $staffRole = $this->activeRestaurantStaff()->first()->formatted_role;
+            return $staffRole;
+        }
 
         return $roles[$this->role] ?? ucfirst($this->role);
     }

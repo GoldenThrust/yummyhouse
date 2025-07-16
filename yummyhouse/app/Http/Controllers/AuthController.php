@@ -21,6 +21,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8',
+            'device_name' => 'required',
         ]);
 
         // Get user model instance (not just the query)
@@ -47,7 +48,7 @@ class AuthController extends Controller
         }
 
         // Generate token
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken($request->device_name)->plainTextToken;
 
         // Fire registration event (used for email verification)
         event(new Registered($user));
@@ -68,7 +69,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $fields['email'])->first();
 
-        if (!$user || !Hash::check($fields['password'], $user->password)) {
+        if (!$user || !Hash::check($fields['password'], (string) $user->password)) {
             return response()->json(['message' => 'Invalid credentials.'], 401);
         }
 
